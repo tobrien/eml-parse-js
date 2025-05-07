@@ -24,7 +24,7 @@ const {
   getBoundary,
   getCharset,
   toEmailAddress
-} = require('eml-parse-js');
+} = require('@tobrien/eml-parse-js');
 // const EmlFormat =  require('../src/index.ts').default;
 // const {getEmailAddress, unquoteString} = EmlFormat;
 
@@ -34,20 +34,20 @@ describe('ts-hi function test', () => {
   //   const gbkStr = 'text/plain; %E6%88%91 charset=utf-8; format=flowed';
   //   console.log(GBKUTF8.UTF8ToGB2312(utf8Str));
   //   console.log(GBKUTF8.GB2312ToUTF8(gbkStr));
-    // const src = path.join(__dirname, "./fixtures/gbk.txt");
-    // const buff = fs.readFileSync(src);
+  // const src = path.join(__dirname, "./fixtures/gbk.txt");
+  // const buff = fs.readFileSync(src);
 
-    // console.info(decode(encodeToUint8Array(decode(buff, 'gbk'))));
-    // const str = buff.toString();
-    // console.log(GBKUTF8.GB2312ToUTF8(str));
-    // const newbf = encodeToUint8Array(str, 'gb2312');
-    // console.log(decode(newbf, 'gbk'));
-    // const newBuff1 = encodeToUint8Array(str);
-    // console.info(decode(encodeToUint8Array(decode(newBuff1, 'gbk'))));
-    // const newBuff2 = encodeToUint8Array(str, 'gbk');
-    // console.info(decode(encodeToUint8Array(decode(newBuff2, 'gbk'))));
-    // console.log(GBKUTF8.UTF8ToGB2312(GBKUTF8.GB2312ToUTF8(str)));
-    // expect(GBKUTF8.GB2312ToUTF8(gbkStr)).eq(utf8Str);
+  // console.info(decode(encodeToUint8Array(decode(buff, 'gbk'))));
+  // const str = buff.toString();
+  // console.log(GBKUTF8.GB2312ToUTF8(str));
+  // const newbf = encodeToUint8Array(str, 'gb2312');
+  // console.log(decode(newbf, 'gbk'));
+  // const newBuff1 = encodeToUint8Array(str);
+  // console.info(decode(encodeToUint8Array(decode(newBuff1, 'gbk'))));
+  // const newBuff2 = encodeToUint8Array(str, 'gbk');
+  // console.info(decode(encodeToUint8Array(decode(newBuff2, 'gbk'))));
+  // console.log(GBKUTF8.UTF8ToGB2312(GBKUTF8.GB2312ToUTF8(str)));
+  // expect(GBKUTF8.GB2312ToUTF8(gbkStr)).eq(utf8Str);
   // });
   // it('getCharset should work', () => {
   //   const boundary = "text/plain; charset=utf-8; format=flowed";

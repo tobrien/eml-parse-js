@@ -7,7 +7,7 @@ const {
   readEml,
   parseEml,
   buildEml,
-} = require('eml-parse-js');
+} = require('@tobrien/eml-parse-js');
 
 function _read(strOrObj, fileName) {
   readEml(strOrObj, function (error, data) {
@@ -77,7 +77,7 @@ describe('parseEml should Ok', () => {
 
 function readEmlForTest(filepath, encoding = 'utf-8') {
   const src = path.join(__dirname, filepath);
-  const eml =  fs.readFileSync(src, encoding);
+  const eml = fs.readFileSync(src, encoding);
   return readEml(eml);
 }
 
@@ -92,12 +92,12 @@ describe('readEml should decode', () => {
   })
 
   it('to and from correctly(#40)', () => {
-		const readEmlJson = readEmlForTest('./fixtures/spam.eml');
+    const readEmlJson = readEmlForTest('./fixtures/spam.eml');
     expect(readEmlJson.from.name).to.equal('Matilda, Klein');
     expect(readEmlJson.from.email).to.equal('noreply@guide-des-vins-de-bourgogne.fr');
     expect(readEmlJson.to.name).to.equal('');
     expect(readEmlJson.to.email).to.equal('leon.struck@web.de');
-	});
+  });
 
   it('cc recepient', () => {
     const readEmlJson = readEmlForTest('./fixtures/multipleRecipientsEmail.eml');
@@ -119,25 +119,25 @@ describe('readEml should decode', () => {
     expect(readEmlJson.html).to.contain('A small body with _underscores');
   })
 
-	it('headers with line breaks correctly', () => {
-		const readEmlJson = readEmlForTest('./fixtures/lineBreakInHeader.eml');
+  it('headers with line breaks correctly', () => {
+    const readEmlJson = readEmlForTest('./fixtures/lineBreakInHeader.eml');
     expect(readEmlJson.headers.Date).to.equal('Thu, 29 Sep 2022 12:22:20 +0100');
     expect(readEmlJson.headers['Message-ID']).to.equal('\r\n<CAGFso0R6WbMomMx6mFFJzt_wiL8wRm3sN0YQwXz12Ugbt72XSw@mail.gmail.com>');
     assert.deepEqual(readEmlJson.date, new Date('Thu, 29 Sep 2022 12:22:20 +0100'));
-	});
+  });
 
   it('attachments', () => {
-		const readEmlJson = readEmlForTest('./fixtures/emailWithAttachments.eml');
+    const readEmlJson = readEmlForTest('./fixtures/emailWithAttachments.eml');
     expect(readEmlJson.attachments.length).to.equal(2);
     expect(readEmlJson.attachments[0].name).to.equal('Smalltextfile.txt');
     expect(readEmlJson.attachments[1].name).to.equal('Smalltextfile2.txt');
-	});
+  });
 
   it('inline attachments', () => {
-		const readEmlJson = readEmlForTest('./fixtures/inlineAttachment.eml');
+    const readEmlJson = readEmlForTest('./fixtures/inlineAttachment.eml');
     expect(readEmlJson.attachments.length).to.equal(1);
     expect(readEmlJson.attachments[0].name).to.equal('image.png');
-	});
+  });
 
   it('base64 encoded text and html body', () => {
     const readEmlJson = readEmlForTest('./fixtures/unicode.eml');
@@ -146,10 +146,10 @@ describe('readEml should decode', () => {
   });
 
   it('has the same textual content by text and html', () => {
-		const readEmlJson = readEmlForTest('./fixtures/emailWithAttachments.eml');
+    const readEmlJson = readEmlForTest('./fixtures/emailWithAttachments.eml');
     expect(readEmlJson.html).to.contain('Little body');
     expect(readEmlJson.text).to.contain('Little body');
-	});
+  });
 
   it('should decode email with line break in between content type and rest of headers', () => {
     const readEmlJson = readEmlForTest('./fixtures/emailWithSeperateContentType.eml');

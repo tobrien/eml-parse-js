@@ -10,7 +10,7 @@
 ## start guide
 
 ```javascript
-import { parseEml, readEml, GBKUTF8, decode } from 'eml-parse-js';
+import { parseEml, readEml, GBKUTF8, decode } from '@tobrien/eml-parse-js';
 
 // const eml = await axios(http | ajax).get()
 // `.eml` file 

@@ -9,7 +9,7 @@ const {
   readEml,
   parseEml,
   buildEml
-} = require('eml-parse-js')
+} = require('@tobrien/eml-parse-js')
 
 function _read(strOrObj, fileName) {
   readEml(strOrObj, function (error, data) {
@@ -72,5 +72,5 @@ describe('buildEml should Ok', () => {
   //   const eml = fs.readFileSync(src, "utf-8");
   //   _build(eml, 'multipart');
   // });
-  
+
 });
