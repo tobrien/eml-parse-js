@@ -1,6 +1,6 @@
 {
 	"name": "eml-parse-js",
-	"version": "1.2.0-beta.0",
+	"version": "1.2.0",
 	"description": "format EML file in browser env",
 	"main": "./dist/index.cjs.js",
 	"module": "./dist/index.es.js",
@@ -18,13 +18,8 @@
 	},
 	"scripts": {
 		"build": "vite build",
-		"build:publish": "npm run clean:dist && npm run build",
-		"clean:dist": "rimraf dist",
-		"eslint:init": "eslint --init",
-		"lint": "eslint --cache --fix src",
-		"link:lib": "rimraf node_modules/eml-parse-js && linklocal",
-		"prettier": "prettier --parser typescript --write src/*ts && npm run lint",
-		"prepublishOnly": "npm run prettier && npm run build:publish && npm run test",
+		"clean": "rimraf dist",
+		"lint": "eslint --cache src",
 		"test": "mocha --reporter spec"
 	},
 	"files": [
