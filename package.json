@@ -69,6 +69,10 @@
 		{
 			"name": "Bean Q",
 			"url": "https://github.com/MQpeng"
+		},
+		{
+			"name": "Tim O'Brien",
+			"url": "https://github.com/tobrien"
 		}
 	],
 	"devDependencies": {
@@ -101,5 +105,5 @@
 			"git add"
 		]
 	},
-	"packageManager": "pnpm@9.15.1"
+	"packageManager": "pnpm@10.10.0"
 }
