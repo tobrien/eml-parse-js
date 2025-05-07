@@ -1,6 +1,8 @@
 # eml-parse-js
 [RFC 822](https://www.w3.org/Protocols/rfc822/) EML file format parser and builder, Can be used in browser environment
 
+> This version is forked from https://github.com/MQpeng/eml-parse-js
+
 > fork from `eml-format-js`(used in Browser env) & `eml-format` (used in NodeJs env)
 1. fix `eml-format-js` for parsing html from the eml with `quoted-printable`
 2. add `data` with `base64` in attachment
