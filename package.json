@@ -1,7 +1,7 @@
 {
 	"name": "@tobrien/eml-parse-js",
-	"version": "1.2.0",
-	"description": "format EML file in browser env",
+	"version": "1.2.1",
+	"description": "Format EML file in browser environment",
 	"main": "./dist/index.cjs.js",
 	"module": "./dist/index.es.js",
 	"browser": "./dist/index.umd.js",
@@ -29,7 +29,7 @@
 	"private": false,
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/MQpeng/eml-parse-js"
+		"url": "git+https://github.com/tobrien/eml-parse-js"
 	},
 	"keywords": [
 		"eml",
@@ -41,9 +41,9 @@
 	"author": "bean",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/MQpeng/eml-parse-js/issues"
+		"url": "https://github.com/tobrien/eml-parse-js/issues"
 	},
-	"homepage": "https://github.com/MQpeng/eml-parse-js#readme",
+	"homepage": "https://github.com/tobrien/eml-parse-js#readme",
 	"contributors": [
 		{
 			"name": "Charlie Harding",
