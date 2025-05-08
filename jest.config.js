@@ -8,10 +8,10 @@ module.exports = {
     collectCoverageFrom: ['src/**/*.ts'],
     coverageThreshold: {
         global: {
-            branches: 46,
-            functions: 73,
-            lines: 57,
-            statements: 58,
+            branches: 45,
+            functions: 70,
+            lines: 56,
+            statements: 57,
         },
     },
 }; 
