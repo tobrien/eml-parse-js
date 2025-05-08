@@ -62,10 +62,10 @@ describe('Charset Utilities', () => {
             const strInIso = 'naïve €'; // String with chars in ISO-8859-15
             const arrInIso = encode(strInIso, 'iso-8859-15');
 
-            const originalTextDecoder = global.TextDecoder;
+            const originalTextDecoder = globalThis.TextDecoder;
 
             // Mock TextDecoder
-            global.TextDecoder = jest.fn().mockImplementation((charset, options) => {
+            globalThis.TextDecoder = jest.fn().mockImplementation((charset, options) => {
                 // console.log(`Mock TextDecoder called with: ${charset}`); // For debugging
                 const actualDecoder = new originalTextDecoder(charset, options);
                 if (charset === normalizeCharset('my-custom-charset') || charset === 'utf-8') {
@@ -83,7 +83,7 @@ describe('Charset Utilities', () => {
 
             expect(decode(arrInIso, 'my-custom-charset')).toBe(strInIso);
 
-            global.TextDecoder = originalTextDecoder; // Restore original TextDecoder
+            globalThis.TextDecoder = originalTextDecoder; // Restore original TextDecoder
         });
     });
 
