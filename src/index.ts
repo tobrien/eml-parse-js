@@ -128,7 +128,7 @@ function getEmailAddress(rawStr: string): EmailAddress | EmailAddress[] | null {
  * @returns {String}
  */
 function decodeJoint(str: string) {
-	const match = /=\?([^?]+)\?(B|Q)\?(.+?)(\?=)/gi.exec(str);
+	const match = /=\?([^?]+)\?(B|Q)\?([^?]+)\?=/gi.exec(str);
 	if (match) {
 		const charset = getCharsetName(match[1] || defaultCharset); //eq. match[1] = 'iso-8859-2'; charset = 'iso88592'
 		const type = match[2].toUpperCase();
@@ -154,7 +154,7 @@ function decodeJoint(str: string) {
  * @returns {String}
  */
 function unquoteString(str: string): string {
-	const regex = /=\?([^?]+)\?(B|Q)\?(.+?)(\?=)/gi;
+	const regex = /=\?([^?]+)\?(B|Q)\?([^?]+)\?=/gi;
 	let decodedString = str || '';
 	const spinOffMatch = decodedString.match(regex);
 	if (spinOffMatch) {
@@ -169,33 +169,12 @@ function unquoteString(str: string): string {
  * Decodes 'quoted-printable'
  * @param {String} value
  * @param {String} charset
- * @param {String} qEncoding whether the encoding is RFC-2047’s Q-encoding, meaning special handling of underscores.
+ * @param {String} qEncoding whether the encoding is RFC-2047's Q-encoding, meaning special handling of underscores.
  * @returns {String}
  */
 function unquotePrintable(value: string, charset?: string, qEncoding = false): string {
-	//Convert =0D to '\r', =20 to ' ', etc.
-	// if (!charset || charset == "utf8" || charset == "utf-8") {
-	//   return value
-	//     .replace(/=([\w\d]{2})=([\w\d]{2})=([\w\d]{2})/gi, function (matcher, p1, p2, p3, offset, string) {
-
-	//     })
-	//     .replace(/=([\w\d]{2})=([\w\d]{2})/gi, function (matcher, p1, p2, offset, string) {
-
-	//     })
-	//     .replace(/=([\w\d]{2})/gi, function (matcher, p1, offset, string) { return String.fromCharCode(parseInt(p1, 16)); })
-	//     .replace(/=\r?\n/gi, ""); //Join line
-	// } else {
-	//   return value
-	//     .replace(/=([\w\d]{2})=([\w\d]{2})/gi, function (matcher, p1, p2, offset, string) {
-
-	//     })
-	//     .replace(/=([\w\d]{2})/gi, function (matcher, p1, offset, string) {
-
-	//      })
-	//     .replace(/=\r?\n/gi, ''); //Join line
-	// }
 	let rawString = value
-		.replace(/[\t ]+$/gm, '') // remove invalid whitespace from the end of lines
+		.replace(/(?:[ ]+\t*|\t+[ ]*)$/gm, '') // remove whitespace from the end of lines
 		.replace(/=(?:\r?\n|$)/g, ''); // remove soft line breaks
 
 	if (qEncoding) {
