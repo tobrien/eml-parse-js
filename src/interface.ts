@@ -10,7 +10,7 @@ export interface EmailAddress {
 /**
  * parse result
  */
-export interface ParsedEmlJson {
+export interface ParsedEml {
 	headers: EmlHeaders;
 	body?: string | (BoundaryConvertedData | null)[];
 }
@@ -18,7 +18,7 @@ export interface ParsedEmlJson {
 /**
  * read result
  */
-export interface ReadedEmlJson {
+export interface EmlContent {
 	date: Date | string;
 	subject: string;
 	from: EmailAddress | EmailAddress[] | null;

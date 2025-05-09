@@ -65,15 +65,15 @@ try {
 
 This library provides several functions for working with EML files. The primary ones are `parseEml`, `readEml`, and `buildEml`.
 
-### `parseEml(eml: string, options?: OptionOrNull | CallbackFn<ParsedEmlJson>, callback?: CallbackFn<ParsedEmlJson>): string | Error | ParsedEmlJson`
+### `parseEml(eml: string, options?: OptionOrNull | CallbackFn<ParsedEml>, callback?: CallbackFn<ParsedEml>): string | Error | ParsedEml`
 
-The `parseEml` function takes an EML file content as a string and parses it into a structured JavaScript object. This object, `ParsedEmlJson`, contains the raw headers and body of the email, including all MIME parts.
+The `parseEml` function takes an EML file content as a string and parses it into a structured JavaScript object. This object, `ParsedEml`, contains the raw headers and body of the email, including all MIME parts.
 
 -   **`eml`**: A string containing the EML file content.
 -   **`options`** (optional): An object with parsing options, or a callback function. One common option is `headersOnly: true` to parse only the email headers.
--   **`callback`** (optional): A callback function that will be invoked with `(error, result)`. If not provided, the function will return the result directly or throw an error.
+-   **`callback`** (optional): A callback function that will be invoked with `(error, data) => {}`, where `data` is the parsed `ParsedEml` object.
 
-The returned `ParsedEmlJson` object provides a detailed, somewhat raw representation of the EML structure.
+The returned `ParsedEml` object provides a detailed, somewhat raw representation of the EML structure.
 
 ```javascript
 import { parseEml } from '@tobrien/eml-parse-js';
@@ -96,23 +96,23 @@ try {
 }
 ```
 
-### `readEml(eml: string | ParsedEmlJson, options?: OptionOrNull | CallbackFn<ReadedEmlJson>, callback?: CallbackFn<ReadedEmlJson>): ReadedEmlJson | Error | string`
+### `readEml(eml: string | ParsedEml, options?: OptionOrNull | CallbackFn<EmlContent>, callback?: CallbackFn<EmlContent>): EmlContent | Error | string`
 
-The `readEml` function takes either an EML file content as a string or a `ParsedEmlJson` object (from `parseEml`) and converts it into a more user-friendly `ReadedEmlJson` object. This object simplifies access to common email fields like subject, from, to, cc, date, text body, HTML body, and attachments.
+The `readEml` function takes either an EML file content as a string or a `ParsedEml` object (from `parseEml`) and converts it into a more user-friendly `EmlContent` object. This object simplifies access to common email fields like subject, from, to, cc, date, text body, HTML body, and attachments.
 
--   **`eml`**: A string containing the EML file content or a `ParsedEmlJson` object.
--   **`options`** (optional): An object with parsing options, or a callback function.
--   **`callback`** (optional): A callback function that will be invoked with `(error, result)`. If not provided, the function will return the result directly or throw an error.
+-   **`eml`**: A string containing the EML file content or a `ParsedEml` object.
+-   **`options`**: Optional settings. Currently, only `headersOnly: boolean` is supported. If true, only headers are parsed.
+-   **`callback`**: An optional callback function `(error, data) => {}`, where `data` is the `EmlContent` object.
 
-The `ReadedEmlJson` object makes it easier to work with the email's content directly. For example, attachments are processed and their data is made available.
+The `EmlContent` object makes it easier to work with the email's content directly. For example, attachments are processed and their data is made available.
 
-### `buildEml(data: ReadedEmlJson | string, options?: BuildOptions | CallbackFn<string> | null, callback?: CallbackFn<string>): string | Error`
+### `buildEml(data: EmlContent | string, options?: BuildOptions | CallbackFn<string> | null, callback?: CallbackFn<string>): string | Error`
 
-The `buildEml` function takes a `ReadedEmlJson` object (or an EML string, which it will first parse using `readEml`) and constructs an EML file string. This is useful for creating or modifying emails programmatically.
+The `buildEml` function takes a `EmlContent` object (or an EML string, which it will first parse using `readEml`) and constructs an EML file string. This is useful for creating or modifying emails programmatically.
 
--   **`data`**: A `ReadedEmlJson` object representing the email to be built, or an EML string.
--   **`options`** (optional): An object with build options (e.g., for encoding), or a callback function.
--   **`callback`** (optional): A callback function that will be invoked with `(error, emlString)`. If not provided, the function will return the EML string directly or throw an error.
+-   **`data`**: A `EmlContent` object representing the email to be built, or an EML string.
+-   **`options`**: Optional settings for building the EML, like encoding preferences (not fully implemented yet).
+-   **`callback`**: An optional callback function `(error, data) => {}`, where `data` is the EML string.
 
 This function allows you to assemble an EML message from its constituent parts, including headers, text/HTML bodies, and attachments.
 
