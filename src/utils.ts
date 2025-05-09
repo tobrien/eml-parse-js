@@ -5,8 +5,8 @@ import { decode } from './charset';
  * @param contentType - string
  */
 export function getBoundary(contentType: string) {
-	const match = /(?:B|b)oundary=(?:'|")?(.{1,70}?)(?:'|")?(?:\s*;.*)?$/.exec(contentType);
-	return match ? match[1] : undefined;
+	const match = /(?:B|b)oundary=(?:\s*(?:'|")(.*?)(?:'|")|([^;\s\r\n"']{1,70}))(?:\s*;.*)?$/.exec(contentType);
+	return match ? (match[1] || match[2]) : undefined;
 }
 //Gets the character encoding name for iconv, e.g. 'iso-8859-2' -> 'iso88592'
 export function getCharsetName(charset: string) {

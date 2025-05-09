@@ -174,7 +174,7 @@ function unquoteString(str: string): string {
  */
 function unquotePrintable(value: string, charset?: string, qEncoding = false): string {
 	let rawString = value
-		.replace(/[\t ](?:[\t ])*$/gm, '') // remove invalid whitespace from the end of lines
+		.replace(/[\t ]+$/gm, '') // remove whitespace from the end of lines
 		.replace(/=(?:\r?\n|$)/g, ''); // remove soft line breaks
 
 	if (qEncoding) {
