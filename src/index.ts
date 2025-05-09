@@ -729,7 +729,7 @@ function read(
 				content = decode(content as Uint8Array, charset);
 			}
 
-			let htmlContent = content.replace(/\r\n|(&quot;)/g, '').replace(/\"/g, `"`);
+			let htmlContent = content.replace(/\r\n|(&quot;)/g, '');
 
 			try {
 				if (encoding === 'base64') {
