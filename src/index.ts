@@ -6,7 +6,9 @@
 import { Base64 } from 'js-base64';
 
 import { convert, decode, encode } from './charset';
-import { GB2312UTF8, getCharsetName, guid, mimeDecode, wrap, getBoundary } from './utils';
+import { getCharsetName, mimeDecode, getBoundary } from './utils/general';
+import { guid } from './utils/guid';
+import { GB2312UTF8 } from './utils/gbkutf';
 import type {
 	KeyValue,
 	EmailAddress,
@@ -23,6 +25,7 @@ import type {
 	BoundaryHeaders,
 } from './interface';
 import { addressparser } from './addressparser';
+import { wrap } from './utils/string';
 
 /**
  * log for test
@@ -691,7 +694,7 @@ function read(
 		if (encoding === 'base64') {
 			if (contentType && contentType.indexOf('gbk') >= 0) {
 				// is work?  I'm not sure
-				content = encode(GB2312UTF8.GB2312ToUTF8((content as string).replace(/\r?\n/g, '')));
+				content = encode(GB2312UTF8((content as string).replace(/\r?\n/g, '')));
 			} else {
 				// string to Uint8Array by TextEncoder
 				content = encode((content as string).replace(/\r?\n/g, ''));
@@ -954,7 +957,6 @@ export {
 	parse as parseEml,
 	read as readEml,
 	build as buildEml,
-	GB2312UTF8 as GBKUTF8,
 };
 
 //  const GBKUTF8 = GB2312UTF8;
