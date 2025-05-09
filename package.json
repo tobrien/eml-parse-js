@@ -1,6 +1,6 @@
 {
 	"name": "@tobrien/eml-parse-js",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"description": "Format EML file in browser environment",
 	"main": "./dist/index.cjs.js",
 	"module": "./dist/index.es.js",
@@ -20,7 +20,8 @@
 		"build": "vite build",
 		"clean": "rimraf dist",
 		"lint": "eslint --cache src",
-		"test": "jest"
+		"test": "jest",
+		"prepublishOnly": "pnpm run clean && pnpm run build"
 	},
 	"files": [
 		"dist",
