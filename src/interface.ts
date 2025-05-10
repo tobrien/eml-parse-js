@@ -89,10 +89,6 @@ export interface BuildOptions extends Options {
 	encode?: boolean; // Not realized yet
 }
 
-export type CallbackFn<T> = (error: any, result?: T) => void;
-
-export type OptionOrNull = Options | null;
-
 /**
  * BoundaryRawData
  */

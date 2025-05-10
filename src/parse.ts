@@ -1,26 +1,10 @@
-import { CallbackFn, OptionOrNull, Options, ParsedEml } from "./interface";
+import { Options, ParsedEml } from "./interface";
 import { getBoundary } from "./utils/general";
 
-/**
- * Parses EML file content and returns object-oriented representation of the content.
- * @param {String} eml
- * @param {OptionOrNull | CallbackFn<ParsedEml>} options
- * @param {CallbackFn<ParsedEml>} callback
- * @returns {string | Error | ParsedEml}
- */
 export const parse = (
     eml: string,
-    options?: OptionOrNull | CallbackFn<ParsedEml>,
-    callback?: CallbackFn<ParsedEml>
+    options?: Options,
 ): string | Error | ParsedEml => {
-    //Shift arguments
-    if (typeof options === 'function' && typeof callback === 'undefined') {
-        callback = options;
-        options = null;
-    }
-    if (typeof options !== 'object') {
-        options = { headersOnly: false };
-    }
     let error: string | Error | undefined;
     let result: ParsedEml | undefined = {} as ParsedEml;
     try {
@@ -33,7 +17,6 @@ export const parse = (
     } catch (e) {
         error = e as string;
     }
-    callback && callback(error, result);
     return error || result || new Error('read EML failed!');
 }
 

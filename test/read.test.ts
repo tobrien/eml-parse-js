@@ -75,24 +75,6 @@ SGVsbG8sIFdvcmxkIQ==\r\n`; // "Hello, World!" in base64
         expect(result.text).toBe('Hello, World!');
     });
 
-    it('should correctly parse EML using callback', (done) => {
-        const eml = `Date: Thu, 26 Sep 2024 12:00:00 +0000\r\n\
-From: sender@example.com\r\n\
-Subject: Callback Test\r\n\
-Content-Type: text/plain; charset=utf-8\r\n\
-\r\n\
-Callback content.\r\n`;
-        readEml(eml, (error, result) => {
-            expect(error).toBeUndefined();
-            expect(result).toBeDefined();
-            if (result) {
-                expect(result.subject).toBe('Callback Test');
-                expect(result.text).toContain('Callback content.');
-            }
-            done();
-        });
-    });
-
     it('should correctly process a pre-parsed EML object', () => {
         const parsedEml = {
             headers: {
@@ -103,7 +85,6 @@ Callback content.\r\n`;
             },
             body: 'This is from a pre-parsed object.'
         };
-        // @ts-ignore testing with a manually constructed ParsedEml like object
         const result = readEml(parsedEml as any) as EmlContent;
         expect(result.date).toEqual(new Date('Fri, 27 Sep 2024 13:00:00 +0000'));
         expect(result.subject).toBe('Pre-parsed EML');
@@ -174,11 +155,10 @@ Content-Transfer-Encoding: 7bit\r\n\
     });
 
     it('should return an error for invalid EML input type for readEml', () => {
-        // @ts-ignore testing invalid input
-        const result = readEml(false);
+        const result = readEml(false as any) as Error;
         expect(result).toBeInstanceOf(Error);
         // The specific error message might vary depending on how parseEml handles it first
-        expect((result as Error).message).toBe('Missing EML file content!');
+        expect(result.message).toBe('Missing EML file content!');
     });
 
     it('should handle EML input that results in a parsing error from parseEml', () => {
