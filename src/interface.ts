@@ -28,7 +28,7 @@ export interface EmlContent {
 	multipartAlternative?: {
 		'Content-Type': string;
 	};
-	text?: string;
+	text: string;
 	textheaders?: BoundaryHeaders;
 	html?: string;
 	htmlheaders?: BoundaryHeaders;
@@ -100,6 +100,7 @@ export interface BoundaryRawData {
 	boundary: string;
 	lines: string[];
 }
+
 /**
  * Convert BoundaryRawData result
  */
@@ -110,6 +111,7 @@ export interface BoundaryConvertedData {
 		body: string | Array<BoundaryConvertedData | string>;
 	};
 }
+
 export interface BoundaryHeaders extends KeyValue {
 	'Content-Type': string;
 	'Content-Transfer-Encoding'?: string;
