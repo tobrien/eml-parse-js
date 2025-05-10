@@ -17,9 +17,10 @@ export default defineConfig({
       output: {
         globals: {
           'js-base64': 'Base64',
+          '@sinonjs/text-encoding': 'TextEncoding'
         }
       },
-      external: ['js-base64'],
+      external: ['js-base64', '@sinonjs/text-encoding'],
     }
   }
 })
