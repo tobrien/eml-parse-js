@@ -62,14 +62,14 @@ describe('Email Utility Functions', () => {
 
     describe('getEmailAddress', () => {
         it('should parse a simple email string', () => {
-            expect(getEmailAddress('"Test User" <test@example.com>')).toEqual({ name: 'Test User', email: 'test@example.com' });
+            expect(getEmailAddress('"Test User" <test@example.com>')).toEqual([{ name: 'Test User', email: 'test@example.com' }]);
         });
 
         it('should parse an email string with no name', () => {
-            expect(getEmailAddress('<test@example.com>')).toEqual({ name: '', email: 'test@example.com' });
+            expect(getEmailAddress('<test@example.com>')).toEqual([{ name: '', email: 'test@example.com' }]);
         });
         it('should parse an email string that is just an email', () => {
-            expect(getEmailAddress('test@example.com')).toEqual({ name: '', email: 'test@example.com' });
+            expect(getEmailAddress('test@example.com')).toEqual([{ name: '', email: 'test@example.com' }]);
         });
 
         it('should parse multiple email addresses', () => {
@@ -80,7 +80,7 @@ describe('Email Utility Functions', () => {
         });
 
         it('should return null for an empty string', () => {
-            expect(getEmailAddress('')).toBeNull();
+            expect(getEmailAddress('')).toEqual([]);
         });
     });
 
@@ -349,9 +349,9 @@ This is the plain text body of the email.\r\n`;
 
         expect(result.date).toEqual(new Date('Mon, 23 Sep 2024 10:00:00 +0000'));
         expect(result.subject).toBe('Test Subject');
-        expect(result.from).toEqual({ name: 'Sender', email: 'sender@example.com' });
-        expect(result.to).toEqual({ name: 'Receiver', email: 'receiver@example.com' });
-        expect(result.cc).toEqual({ name: 'Carbon Copy', email: 'cc@example.com' });
+        expect(result.from).toEqual([{ name: 'Sender', email: 'sender@example.com' }]);
+        expect(result.to).toEqual([{ name: 'Receiver', email: 'receiver@example.com' }]);
+        expect(result.cc).toEqual([{ name: 'Carbon Copy', email: 'cc@example.com' }]);
         expect(result.html).toBeUndefined();
         expect(result.attachments).toBeUndefined();
     });
