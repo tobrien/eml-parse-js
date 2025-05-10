@@ -1,4 +1,4 @@
-import { toEmailAddress, getCharset, getEmailAddress, unquoteString, EmailAddress, createBoundary, unquotePrintable, parseEml, ParsedEmlJson, readEml, ReadedEmlJson, Attachment } from '../src/index';
+import { toEmailAddress, getCharset, getEmailAddress, unquoteString, EmailAddress, createBoundary, unquotePrintable, parseEml, ParsedEml, readEml, EmlContent, Attachment } from '../src/index';
 
 describe('Email Utility Functions', () => {
     describe('toEmailAddress', () => {
@@ -177,7 +177,7 @@ describe('unquotePrintable', () => {
 describe('parseEml', () => {
     it('should parse a simple EML string with headers and body', () => {
         const eml = `Date: Mon, 23 Sep 2024 10:00:00 +0000\r\nFrom: "Sender" <sender@example.com>\r\nTo: "Receiver" <receiver@example.com>\r\nSubject: Test Email\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nThis is the body of the email.\r\n`;
-        const result = parseEml(eml) as ParsedEmlJson;
+        const result = parseEml(eml) as ParsedEml;
         expect(result.headers?.From).toContain('"Sender" <sender@example.com>');
         expect(result.headers?.Subject).toContain('Test Email');
         expect(result.body).toContain('This is the body of the email.');
@@ -185,21 +185,21 @@ describe('parseEml', () => {
 
     it('should handle the headersOnly option', () => {
         const eml = `From: sender@example.com\r\nTo: receiver@example.com\r\nSubject: Test\r\n\r\nBody content`;
-        const result = parseEml(eml, { headersOnly: true }) as ParsedEmlJson;
+        const result = parseEml(eml, { headersOnly: true }) as ParsedEml;
         expect(result.headers?.Subject).toContain('Test');
         expect(result.body).toBeUndefined();
     });
 
     it('should parse an EML with multi-line headers', () => {
         const eml = `Subject: This is a very long subject\r\n that continues on the next line\r\nFrom: test@example.com\r\n\r\nBody`;
-        const result = parseEml(eml) as ParsedEmlJson;
+        const result = parseEml(eml) as ParsedEml;
         expect(result.headers?.Subject).toContain('This is a very long subject');
         expect(result.body).toContain('Body');
     });
 
     it('should handle multiple headers with the same name', () => {
         const eml = `Received: from mailserver1 (server1.example.com [10.0.0.1])\r\nReceived: from mailserver2 (server2.example.com [10.0.0.2])\r\nFrom: test@example.com\r\n\r\nBody`;
-        const result = parseEml(eml) as ParsedEmlJson;
+        const result = parseEml(eml) as ParsedEml;
         expect(Array.isArray(result.headers?.Received)).toBe(true);
         expect(result.headers?.Received).toEqual([
             'from mailserver1 (server1.example.com [10.0.0.1])',
@@ -230,7 +230,7 @@ Content-Type: text/html; charset=utf-8\r\n\
 \r\n\
 <p>This is the HTML part.</p>\r\n\
 --${boundary}--\r\n`;
-        const result = parseEml(eml) as ParsedEmlJson;
+        const result = parseEml(eml) as ParsedEml;
         expect(result.headers?.['Content-Type']).toBe(`multipart/alternative; boundary="${boundary}"`);
         expect(Array.isArray(result.body)).toBe(true);
         const bodyParts = result.body as any[];
@@ -263,7 +263,7 @@ Content-Transfer-Encoding: base64\r\n\
 \r\n\
 SGVsbG8gV29ybGQ=\r\n\
 --${boundary}--\r\n`;
-        const result = parseEml(eml) as ParsedEmlJson;
+        const result = parseEml(eml) as ParsedEml;
         expect(Array.isArray(result.body)).toBe(true);
         const bodyParts = result.body as any[];
         expect(bodyParts.length).toBe(2);
@@ -299,7 +299,7 @@ Content-Disposition: attachment; filename="dummy.pdf"\r\n\
 \r\n\
 [Fake PDF Content]\r\n\
 --${outerBoundary}--\r\n`;
-        const result = parseEml(eml) as ParsedEmlJson;
+        const result = parseEml(eml) as ParsedEml;
         expect(Array.isArray(result.body)).toBe(true);
         const outerParts = result.body as any[];
         expect(outerParts.length).toBe(2);
@@ -327,7 +327,7 @@ Subject: Content-Type in Body Test\r\n\
 Content-Type: text/plain; charset=utf-8\r\n\
 \r\n\
 This is the actual body content.\r\n`;
-        const result = parseEml(eml) as ParsedEmlJson;
+        const result = parseEml(eml) as ParsedEml;
         expect(result.headers?.['Content-Type']).toBe('text/plain; charset=utf-8'); // Header was not in the header section
         // The parser should pick up Content-Type if it appears before the actual body, even if after the first empty line
         // Based on parseRecursive logic, if ct is not in headers, it checks the lines after the empty line for 'Content-Type'
@@ -345,7 +345,7 @@ Subject: Test Subject\r\n\
 Content-Type: text/plain; charset=utf-8\r\n\
 \r\n\
 This is the plain text body of the email.\r\n`;
-        const result = readEml(eml) as ReadedEmlJson;
+        const result = readEml(eml) as EmlContent;
 
         expect(result.date).toEqual(new Date('Mon, 23 Sep 2024 10:00:00 +0000'));
         expect(result.subject).toBe('Test Subject');
@@ -362,7 +362,7 @@ Subject: HTML Email\r\n\
 Content-Type: text/html; charset=utf-8\r\n\
 \r\n\
 <html><body><p>This is an <b>HTML</b> body.</p></body></html>\r\n`;
-        const result = readEml(eml) as ReadedEmlJson;
+        const result = readEml(eml) as EmlContent;
         expect(result.subject).toBe('HTML Email');
         expect(result.html).toBe('<html><body><p>This is an <b>HTML</b> body.</p></body></html>');
         expect(result.text).toBeUndefined();

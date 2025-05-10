@@ -6,14 +6,12 @@
 import { Base64 } from 'js-base64';
 
 import { convert, decode, encode } from './charset';
-import { getCharsetName, mimeDecode, getBoundary } from './utils/general';
-import { guid } from './utils/guid';
-import { GB2312UTF8 } from './utils/gbkutf';
+
 import type {
 	KeyValue,
 	EmailAddress,
-	ParsedEmlJson,
-	ReadedEmlJson,
+	ParsedEml,
+	EmlContent,
 	Attachment,
 	EmlHeaders,
 	Options,
@@ -25,7 +23,10 @@ import type {
 	BoundaryHeaders,
 } from './interface';
 import { addressparser } from './addressparser';
+import { guid } from './utils/guid';
+import { getBoundary, getCharsetName, mimeDecode } from './utils/general';
 import { wrap } from './utils/string';
+import { GB2312UTF8 } from './utils/gbkutf';
 
 /**
  * log for test
@@ -177,7 +178,7 @@ function unquoteString(str: string): string {
  */
 function unquotePrintable(value: string, charset?: string, qEncoding = false): string {
 	let rawString = value
-		.replace(/(?:[ ]+\t*|\t+[ ]*)$/gm, '') // remove whitespace from the end of lines
+		.replace(/[ \t]+$/gm, '') // remove whitespace from the end of lines
 		.replace(/=(?:\r?\n|$)/g, ''); // remove soft line breaks
 
 	if (qEncoding) {
@@ -190,15 +191,15 @@ function unquotePrintable(value: string, charset?: string, qEncoding = false): s
 /**
  * Parses EML file content and returns object-oriented representation of the content.
  * @param {String} eml
- * @param {OptionOrNull | CallbackFn<ParsedEmlJson>} options
- * @param {CallbackFn<ParsedEmlJson>} callback
- * @returns {string | Error | ParsedEmlJson}
+ * @param {OptionOrNull | CallbackFn<ParsedEml>} options
+ * @param {CallbackFn<ParsedEml>} callback
+ * @returns {string | Error | ParsedEml}
  */
 function parse(
 	eml: string,
-	options?: OptionOrNull | CallbackFn<ParsedEmlJson>,
-	callback?: CallbackFn<ParsedEmlJson>
-): string | Error | ParsedEmlJson {
+	options?: OptionOrNull | CallbackFn<ParsedEml>,
+	callback?: CallbackFn<ParsedEml>
+): string | Error | ParsedEml {
 	//Shift arguments
 	if (typeof options === 'function' && typeof callback === 'undefined') {
 		callback = options;
@@ -208,14 +209,14 @@ function parse(
 		options = { headersOnly: false };
 	}
 	let error: string | Error | undefined;
-	let result: ParsedEmlJson | undefined = {} as ParsedEmlJson;
+	let result: ParsedEml | undefined = {} as ParsedEml;
 	try {
 		if (typeof eml !== 'string') {
 			throw new Error('Argument "eml" expected to be string!');
 		}
 
 		const lines = eml.split(/\r?\n/);
-		result = parseRecursive(lines, 0, result, options as Options) as ParsedEmlJson;
+		result = parseRecursive(lines, 0, result, options as Options) as ParsedEml;
 	} catch (e) {
 		error = e as string;
 	}
@@ -483,7 +484,7 @@ function completeBoundary(boundary: BoundaryRawData): BoundaryConvertedData | nu
  * @param {CallbackFn<string>} callback
  */
 function build(
-	data: ReadedEmlJson | string,
+	data: EmlContent | string,
 	options?: BuildOptions | CallbackFn<string> | null,
 	callback?: CallbackFn<string>
 ): string | Error {
@@ -669,20 +670,20 @@ function build(
  * @param {CallbackFn<ReadedEmlJson>} callback Callback function(error, data)
  */
 function read(
-	eml: string | ParsedEmlJson,
-	options?: OptionOrNull | CallbackFn<ReadedEmlJson>,
-	callback?: CallbackFn<ReadedEmlJson>
-): ReadedEmlJson | Error | string {
+	eml: string | ParsedEml,
+	options?: OptionOrNull | CallbackFn<EmlContent>,
+	callback?: CallbackFn<EmlContent>
+): EmlContent | Error | string {
 	//Shift arguments
 	if (typeof options === 'function' && typeof callback === 'undefined') {
 		callback = options;
 		options = null;
 	}
 	let error: Error | string | undefined;
-	let result: ReadedEmlJson | undefined;
+	let result: EmlContent | undefined;
 
 	//Appends the boundary to the result
-	function _append(headers: EmlHeaders, content: string | Uint8Array | Attachment, result: ReadedEmlJson) {
+	function _append(headers: EmlHeaders, content: string | Uint8Array | Attachment, result: EmlContent) {
 		const contentType = headers['Content-Type'] || headers['Content-type'];
 		const contentDisposition = headers['Content-Disposition'];
 
@@ -808,12 +809,12 @@ function read(
 		}
 	}
 
-	function _read(data: ParsedEmlJson): ReadedEmlJson | Error | string {
+	function _read(data: ParsedEml): EmlContent | Error | string {
 		if (!data) {
 			return 'no data';
 		}
 		try {
-			const result = {} as ReadedEmlJson;
+			const result = {} as EmlContent;
 			if (!data.headers) {
 				throw new Error("data does't has headers");
 			}
@@ -949,14 +950,15 @@ export {
 	encode,
 	decode,
 	completeBoundary,
-	ParsedEmlJson,
-	ReadedEmlJson,
+	ParsedEml,
+	EmlContent,
 	EmailAddress,
 	Attachment,
 	BoundaryHeaders,
 	parse as parseEml,
 	read as readEml,
 	build as buildEml,
+	GB2312UTF8 as GBKUTF8,
 };
 
 //  const GBKUTF8 = GB2312UTF8;
