@@ -1,7 +1,7 @@
 import { toEmailAddress } from "./header";
 import { BoundaryConvertedData, BoundaryRawData, EmlContent } from "./interface";
 
-import { BuildOptions, CallbackFn } from "./interface";
+import { BuildOptions } from "./interface";
 import { guid } from "./utils/guid";
 
 import { read } from "./read";
@@ -98,22 +98,10 @@ export const completeBoundary = (boundary: BoundaryRawData): BoundaryConvertedDa
 	return result;
 }
 
-/**
- * buid EML file by ReadedEmlJson or EML file content
- * @param {ReadedEmlJson} data
- * @param {BuildOptions | CallbackFn<string> | null} options
- * @param {CallbackFn<string>} callback
- */
 export const build = (
 	data: EmlContent | string,
-	options?: BuildOptions | CallbackFn<string> | null,
-	callback?: CallbackFn<string>
+	options?: BuildOptions,
 ): string | Error => {
-	//Shift arguments
-	if (typeof options === 'function' && typeof callback === 'undefined') {
-		callback = options;
-		options = null;
-	}
 	let error: Error | string | undefined;
 	let eml = '';
 	const EOL = '\r\n'; //End-of-line
@@ -275,6 +263,5 @@ export const build = (
 	} catch (e) {
 		error = e as string;
 	}
-	callback && callback(error, eml);
 	return error || eml;
 }

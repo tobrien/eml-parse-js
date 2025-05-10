@@ -1,12 +1,10 @@
 import { decode } from "./charset";
 import { encode } from "./charset";
-import { Attachment } from "./interface";
+import { Attachment, Options } from "./interface";
 
 import { EmlHeaders } from "./interface";
 
-import { EmlContent, OptionOrNull } from "./interface";
-
-import { CallbackFn } from "./interface";
+import { EmlContent } from "./interface";
 
 import { ParsedEml } from "./interface";
 import { GB2312UTF8 } from "./utils/gbkutf";
@@ -17,22 +15,11 @@ import { Base64 } from "js-base64";
 import { unquotePrintable, unquoteString } from "./header";
 import { getEmailAddress } from "./header";
 import { parse } from "./parse";
-/**
- * Parses EML file content and return user-friendly object.
- * @param {String | ParsedEmlJson} eml EML file content or object from 'parse'
- * @param { OptionOrNull | CallbackFn<ReadedEmlJson>} options EML parse options
- * @param {CallbackFn<ReadedEmlJson>} callback Callback function(error, data)
- */
+
 export const read = (
     eml: string | ParsedEml,
-    options?: OptionOrNull | CallbackFn<EmlContent>,
-    callback?: CallbackFn<EmlContent>
+    options?: Options,
 ): EmlContent | Error | string => {
-    //Shift arguments
-    if (typeof options === 'function' && typeof callback === 'undefined') {
-        callback = options;
-        options = null;
-    }
     let error: Error | string | undefined;
     let result: EmlContent | undefined;
 
@@ -262,7 +249,7 @@ export const read = (
     }
 
     if (typeof eml === 'string') {
-        const parseResult = parse(eml, options as OptionOrNull);
+        const parseResult = parse(eml, options as Options);
         if (typeof parseResult === 'string' || parseResult instanceof Error) {
             error = parseResult;
         } else {
@@ -283,6 +270,5 @@ export const read = (
     } else {
         error = new Error('Missing EML file content!');
     }
-    callback && callback(error, result);
     return error || result || new Error('read EML failed!');
 }
