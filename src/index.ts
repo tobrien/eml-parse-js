@@ -818,9 +818,13 @@ function read(
 			if (!data.headers) {
 				throw new Error("data does't has headers");
 			}
+
 			if (data.headers['Date']) {
 				result.date = new Date(data.headers['Date']);
+			} else {
+				throw new Error('Required Date header is missing');
 			}
+
 			if (data.headers['Subject']) {
 				result.subject = unquoteString(data.headers['Subject']);
 			}

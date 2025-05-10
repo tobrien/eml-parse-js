@@ -19,7 +19,7 @@ export interface ParsedEml {
  * read result
  */
 export interface EmlContent {
-	date: Date | string;
+	date: Date;
 	subject: string;
 	from: EmailAddress | EmailAddress[] | null;
 	to: EmailAddress | EmailAddress[] | null;
