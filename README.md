@@ -1,19 +1,12 @@
 # eml-parse-js
 
-`@tobrien/eml-parse-js` is a JavaScript library for parsing and building EML files, designed for use in browser environments. It provides tools to handle [RFC 822](https://www.w3.org/Protocols/rfc822/) compliant email formats.
+[![Test Status][test-badge]][test-link]
+[![NPM Version][npm-badge]][npm-link]
+[![License][license-badge]][license-link]
+[![Downloads][downloads-badge]][downloads-link]
+[![Codecov][codecov-badge]][codecov-link]
 
-[test-badge]: https://github.com/tobrien/eml-parse-js/actions/workflows/test.yml/badge.svg
-[test-link]: https://github.com/tobrien/eml-parse-js/actions/workflows/test.yml
-[npm-badge]: https://img.shields.io/npm/v/@tobrien/eml-parse-js.svg
-[npm-link]: https://www.npmjs.com/package/@tobrien/eml-parse-js
-[license-badge]: https://img.shields.io/npm/l/@tobrien/eml-parse-js.svg
-[license-link]: https://github.com/tobrien/eml-parse-js/blob/master/LICENSE
-[downloads-badge]: https://img.shields.io/npm/dt/@tobrien/eml-parse-js.svg
-[downloads-link]: https://www.npmjs.com/package/@tobrien/eml-parse-js
-[codecov-badge]: https://codecov.io/gh/tobrien/eml-parse-js/branch/master/graph/badge.svg
-[codecov-link]: https://codecov.io/gh/tobrien/eml-parse-js
-[snyk-badge]: https://snyk.io/test/github/tobrien/eml-parse-js/badge.svg
-[snyk-link]: https://snyk.io/test/github/tobrien/eml-parse-js
+`@tobrien/eml-parse-js` is a JavaScript library for parsing and building EML files, designed for use in browser environments. It provides tools to handle [RFC 822](https://www.w3.org/Protocols/rfc822/) compliant email formats.
 
 ## Getting Started
 
@@ -50,41 +43,29 @@ This is the email body.`;
 
 try {
   const parsedEml = parseEml(emlString);
-  if (parsedEml instanceof Error) {
-    console.error('Failed to parse EML:', parsedEml);
-  } else {
-    const emailObject = readEml(parsedEml);
-    if (emailObject instanceof Error) {
-      console.error('Failed to read EML content:', emailObject);
-    } else {
-      console.log('Subject:', emailObject.subject);
-      // Output: Subject: Hello World
-      console.log('From Address:', emailObject.from && emailObject.from[0] ? emailObject.from[0].address : 'not found');
-      // Output: From Address: sender@example.com
-      console.log('To Address:', emailObject.to && emailObject.to[0] ? emailObject.to[0].address : 'not found');
-      // Output: To Address: receiver@example.com
-      console.log('Text Body:', emailObject.text);
-      // Output: Text Body: This is the email body.
-    }
-  }
+  const emailObject = readEml(parsedEml);
+  console.log('Subject:', emailObject.subject);
+  // Output: Subject: Hello World
+  console.log('From Address:', emailObject.from && emailObject.from[0] ? emailObject.from[0].address : 'not found');
+  // Output: From Address: sender@example.com
+  console.log('To Address:', emailObject.to && emailObject.to[0] ? emailObject.to[0].address : 'not found');
+  // Output: To Address: receiver@example.com
+  console.log('Text Body:', emailObject.text);
+  // Output: Text Body: This is the email body.
 } catch (error) {
   console.error('Error processing EML:', error);
 }
 ```
 
-
-
 ## API Usage
 
 This library provides several functions for working with EML files. The primary ones are `parseEml`, `readEml`, and `buildEml`.
 
-### `parseEml(eml: string, options?: OptionOrNull): string | Error | ParsedEml`
-### `parseEml(eml: string, options?: OptionOrNull): string | Error | ParsedEml`
+### `parseEml(eml: string, options?: Options): ParsedEml`
 
 The `parseEml` function takes an EML file content as a string and parses it into a structured JavaScript object. This object, `ParsedEml`, contains the raw headers and body of the email, including all MIME parts.
 
 -   **`eml`**: A string containing the EML file content.
--   **`options`** (optional): An object with parsing options. One common option is `headersOnly: true` to parse only the email headers.
 -   **`options`** (optional): An object with parsing options. One common option is `headersOnly: true` to parse only the email headers.
 
 The returned `ParsedEml` object provides a detailed, somewhat raw representation of the EML structure.
@@ -115,7 +96,7 @@ try {
 }
 ```
 
-### `readEml(eml: ParsedEml, options?: OptionOrNull): EmlContent | Error`
+### `readEml(eml: ParsedEml, options?: Options): EmlContent`
 
 The `readEml` function takes a `ParsedEml` object (the output from `parseEml`) and converts it into a more user-friendly `EmlContent` object. This object simplifies access to common email fields like subject, from, to, cc, date, text body, HTML body, and attachments.
 
@@ -139,43 +120,32 @@ This is a simple text body for the readEml example.`;
 
 try {
   const parsedVersion = parseEml(emlSimpleForRead);
-  if (parsedVersion instanceof Error) {
-    console.error('Failed to parse EML for readEml example:', parsedVersion);
-  } else {
-    // Full processing with readEml
-    const emailContent = readEml(parsedVersion);
-    if (emailContent instanceof Error) {
-      console.error('Failed to read EML content:', emailContent);
-    } else {
-      console.log('readEml Subject:', emailContent.subject);
-      // Output: readEml Subject: Example for readEml
-      console.log('readEml From:', emailContent.from && emailContent.from[0] ? emailContent.from[0].address : 'not found');
-      // Output: readEml From: sender.ops@example.com
-      console.log('readEml Text Body Preview:', emailContent.text ? emailContent.text.substring(0, 20) : 'not found');
-      // Output: readEml Text Body Preview: This is a simple tex
-    }
+  // Full processing with readEml
+  const emailContent = readEml(parsedVersion);
+  
+  console.log('readEml Subject:', emailContent.subject);
+  // Output: readEml Subject: Example for readEml
+  console.log('readEml From:', emailContent.from && emailContent.from[0] ? emailContent.from[0].address : 'not found');
+  // Output: readEml From: sender.ops@example.com
+  console.log('readEml Text Body Preview:', emailContent.text ? emailContent.text.substring(0, 20) : 'not found');
+  // Output: readEml Text Body Preview: This is a simple tex
 
-    // Using headersOnly option with readEml
-    // Note: parseEml also has a headersOnly option.
-    // If you only need headers from the start, use parseEml's option.
-    // readEml's headersOnly option is used if you have a full ParsedEml object
-    // but only want to populate the EmlContent with header-derived information.
-    const headersOnlyContent = readEml(parsedVersion, { headersOnly: true });
-    if (headersOnlyContent instanceof Error) {
-      console.error('Failed to read EML content (headersOnly):', headersOnlyContent);
-    } else {
-      console.log('readEml Subject (headersOnly):', headersOnlyContent.subject);
-      // Output: readEml Subject (headersOnly): Example for readEml
-      console.log('readEml Text Body (headersOnly, should be null or undefined):', headersOnlyContent.text);
-      // Output: readEml Text Body (headersOnly, should be null or undefined): null
-    }
-  }
+  // Using headersOnly option with readEml
+  // Note: parseEml also has a headersOnly option.
+  // If you only need headers from the start, use parseEml's option.
+  // readEml's headersOnly option is used if you have a full ParsedEml object
+  // but only want to populate the EmlContent with header-derived information.
+  const headersOnlyContent = readEml(parsedVersion, { headersOnly: true });
+  console.log('readEml Subject (headersOnly):', headersOnlyContent.subject);
+  // Output: readEml Subject (headersOnly): Example for readEml
+  console.log('readEml Text Body (headersOnly, should be null or undefined):', headersOnlyContent.text);
+  // Output: readEml Text Body (headersOnly, should be null or undefined): null
 } catch (error) {
   console.error('Error in readEml example section:', error);
 }
 ```
 
-### `buildEml(data: EmlContent | string, options?: BuildOptions | null): string | Error`
+### `buildEml(data: EmlContent, options?: BuildOptions): string`
 
 The `buildEml` function takes a `EmlContent` object (or an EML string, which it will first parse using `parseEml` and then `readEml`) and constructs an EML file string. This is useful for creating or modifying emails programmatically.
 
@@ -183,10 +153,6 @@ The `buildEml` function takes a `EmlContent` object (or an EML string, which it 
 -   **`options`**: Optional settings for building the EML, like encoding preferences (not fully implemented yet).
 
 This function allows you to assemble an EML message from its constituent parts, including headers, text/HTML bodies, and attachments.
-
-
-
-
 
 ## Fork Notice
 
@@ -203,6 +169,7 @@ This library is a fork of a fork (of maybe about fork.)   And, it was created be
 MIT License
 
 Copyright (c) 2021 Bean
+
 Copyright (c) 2025 Tim O'Brien
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -222,3 +189,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+[test-badge]: https://github.com/tobrien/eml-parse-js/actions/workflows/test.yml/badge.svg
+[test-link]: https://github.com/tobrien/eml-parse-js/actions/workflows/test.yml
+[npm-badge]: https://img.shields.io/npm/v/@tobrien/eml-parse-js.svg
+[npm-link]: https://www.npmjs.com/package/@tobrien/eml-parse-js
+[license-badge]: https://img.shields.io/npm/l/@tobrien/eml-parse-js.svg
+[license-link]: https://github.com/tobrien/eml-parse-js/blob/master/LICENSE
+[downloads-badge]: https://img.shields.io/npm/dt/@tobrien/eml-parse-js.svg
+[downloads-link]: https://www.npmjs.com/package/@tobrien/eml-parse-js
+[codecov-badge]: https://codecov.io/gh/tobrien/eml-parse-js/branch/master/graph/badge.svg
+[codecov-link]: https://codecov.io/gh/tobrien/eml-parse-js
+[snyk-badge]: https://snyk.io/test/github/tobrien/eml-parse-js/badge.svg
+[snyk-link]: https://snyk.io/test/github/tobrien/eml-parse-js
