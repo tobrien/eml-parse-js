@@ -35,10 +35,17 @@ describe('parseEml', () => {
     });
 
     it('should return an error for invalid EML input type', () => {
-        // @ts-ignore testing invalid input
-        const result = parseEml(12345);
-        expect(result).toBeInstanceOf(Error);
-        expect((result as Error).message).toBe('Argument "eml" expected to be string!');
+        try {
+            // @ts-expect-error testing invalid input
+            parseEml(12345);
+            // Fail test if no error is thrown
+            expect(true).toBe(false);
+        } catch (e: any) {
+            expect(e).toBeInstanceOf(Error);
+            expect(e.message).toBe('Error parsing EML data');
+            expect(e.cause).toBeInstanceOf(Error);
+            expect(e.cause.message).toBe('Argument "eml" expected to be string!');
+        }
     });
 
     it('should parse a multipart/alternative message', () => {

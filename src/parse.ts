@@ -4,20 +4,20 @@ import { getBoundary } from "./utils/general";
 export const parse = (
     eml: string,
     options?: Options,
-): string | Error | ParsedEml => {
-    let error: string | Error | undefined;
-    let result: ParsedEml | undefined = {} as ParsedEml;
+): ParsedEml => {
     try {
         if (typeof eml !== 'string') {
             throw new Error('Argument "eml" expected to be string!');
         }
 
         const lines = eml.split(/\r?\n/);
-        result = parseRecursive(lines, 0, result, options as Options) as ParsedEml;
+        const result = parseRecursive(lines, 0, {} as ParsedEml, options as Options) as ParsedEml;
+        return result;
     } catch (e) {
-        error = e as string;
+        const error = new Error("Error parsing EML data");
+        (error as any).cause = e;
+        throw error;
     }
-    return error || result || new Error('read EML failed!');
 }
 
 /**

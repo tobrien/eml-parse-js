@@ -16,12 +16,11 @@ import { unquotePrintable, unquoteString } from "./header";
 import { getEmailAddress } from "./header";
 import { parse } from "./parse";
 
+
 export const read = (
-    eml: string | ParsedEml,
+    eml: ParsedEml,
     options?: Options,
-): EmlContent | Error | string => {
-    let error: Error | string | undefined;
-    let result: EmlContent | undefined;
+): EmlContent => {
 
     //Appends the boundary to the result
     function _append(headers: EmlHeaders, content: string | Uint8Array | Attachment, result: EmlContent) {
@@ -150,9 +149,9 @@ export const read = (
         }
     }
 
-    function _read(data: ParsedEml): EmlContent | Error | string {
+    function _read(data: ParsedEml): EmlContent {
         if (!data) {
-            return 'no data';
+            throw new Error("No data provided");
         }
         try {
             const result = {} as EmlContent;
@@ -248,27 +247,7 @@ export const read = (
         }
     }
 
-    if (typeof eml === 'string') {
-        const parseResult = parse(eml, options as Options);
-        if (typeof parseResult === 'string' || parseResult instanceof Error) {
-            error = parseResult;
-        } else {
-            const readResult = _read(parseResult);
-            if (typeof readResult === 'string' || readResult instanceof Error) {
-                error = readResult;
-            } else {
-                result = readResult;
-            }
-        }
-    } else if (typeof eml === 'object') {
-        const readResult = _read(eml);
-        if (typeof readResult === 'string' || readResult instanceof Error) {
-            error = readResult;
-        } else {
-            result = readResult;
-        }
-    } else {
-        error = new Error('Missing EML file content!');
-    }
-    return error || result || new Error('read EML failed!');
+    const readResult = _read(eml);
+    const result = readResult;
+    return result;
 }
