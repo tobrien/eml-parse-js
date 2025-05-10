@@ -1,3 +1,4 @@
+import { parseEml } from '../src';
 import { EmlContent } from '../src/interface';
 import { read as readEml } from '../src/read'; // Aliasing import
 
@@ -11,7 +12,7 @@ Subject: Test Subject\r\n\
 Content-Type: text/plain; charset=utf-8\r\n\
 \r\n\
 This is the plain text body of the email.\r\n`;
-        const result = readEml(eml) as EmlContent;
+        const result = readEml(parseEml(eml)) as EmlContent;
 
         expect(result.date).toEqual(new Date('Mon, 23 Sep 2024 10:00:00 +0000'));
         expect(result.subject).toBe('Test Subject');
@@ -29,7 +30,7 @@ Subject: HTML Email\r\n\
 Content-Type: text/html; charset=utf-8\r\n\
 \r\n\
 <html><body><p>This is an <b>HTML</b> body.</p></body></html>\r\n`;
-        const result = readEml(eml) as EmlContent;
+        const result = readEml(parseEml(eml)) as EmlContent;
         expect(result.subject).toBe('HTML Email');
         expect(result.html).toBe('<html><body><p>This is an <b>HTML</b> body.</p></body></html>');
         expect(result.text).toBeUndefined();
@@ -44,7 +45,7 @@ Content-Transfer-Encoding: quoted-printable\r\n\
 \r\n\
 This is a line with soft line break.=\r\n\
 This is an encoded =C3=A9 char.\r\n`;
-        const result = readEml(eml) as EmlContent;
+        const result = readEml(parseEml(eml)) as EmlContent;
         expect(result.subject).toBe('Quoted-Printable Email');
         expect(result.text).toContain('This is a line with soft line break.This is an encoded é char.');
     });
@@ -55,10 +56,10 @@ Subject: No Date\\r\\n\
 Content-Type: text/plain; charset=utf-8\\r\\n\
 \\r\\n\
 This email has no date.\\r\\n`;
-        const result = readEml(eml);
+        const result = readEml(parseEml(eml));
         expect(result).toBeInstanceOf(Error);
         // Based on the check in read.ts: throw new Error('Required Date header is missing');
-        expect((result as Error).message).toBe('Required Date header is missing');
+        expect((result as unknown as Error).message).toBe('Required Date header is missing');
     });
 
     it('should correctly parse base64 encoded text body', () => {
@@ -70,7 +71,7 @@ Content-Type: text/plain; charset=utf-8\r\n\
 Content-Transfer-Encoding: base64\r\n\
 \r\n\
 SGVsbG8sIFdvcmxkIQ==\r\n`; // "Hello, World!" in base64
-        const result = readEml(eml) as EmlContent;
+        const result = readEml(parseEml(eml)) as EmlContent;
         expect(result.subject).toBe('Base64 Encoded Body');
         expect(result.text).toBe('Hello, World!');
     });
@@ -110,7 +111,7 @@ Content-Disposition: attachment; filename=\"testfile.txt\"\r\n\
 \r\n\
 SGVsbG8gdGhpcyBpcyBhIHRlc3QgZmlsZQ==\r\n\
 --boundary123--\r\n`; // "Hello this is a test file" in base64
-        const result = readEml(eml) as EmlContent;
+        const result = readEml(parseEml(eml)) as EmlContent;
 
         expect(result.subject).toBe('Email with Attachment');
         expect(result.text).toBe('This is the main body of the email.');
@@ -144,7 +145,7 @@ Content-Transfer-Encoding: 7bit\r\n\
 \r\n\
 <p>This is the <b>HTML</b> version.</p>\r\n\
 --boundary_alternative--\r\n`;
-        const result = readEml(eml) as EmlContent;
+        const result = readEml(parseEml(eml)) as EmlContent;
 
         expect(result.subject).toBe('Multipart Alternative Email');
         expect(result.text).toBe('This is the plain text version.');
@@ -154,19 +155,12 @@ Content-Transfer-Encoding: 7bit\r\n\
         // expect(result.multipartAlternative?.[\'Content-Type\']).toContain('multipart/alternative');
     });
 
-    it('should return an error for invalid EML input type for readEml', () => {
-        const result = readEml(false as any) as Error;
-        expect(result).toBeInstanceOf(Error);
-        // The specific error message might vary depending on how parseEml handles it first
-        expect(result.message).toBe('Missing EML file content!');
-    });
-
     it('should handle EML input that results in a parsing error from parseEml', () => {
         const malformedEml = `From: test@example.com\r\nThis is not a valid header line here`;
         // Intentionally create a situation where parseEml might struggle or return an error structure
         // Forcing a specific error from parseEml is hard without knowing its internals deeply,
         // but an unparseable structure should result in an error from readEml.
-        const result = readEml(malformedEml);
+        const result = readEml(parseEml(malformedEml));
         expect(result).toBeInstanceOf(Object);
     });
 

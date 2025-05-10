@@ -99,26 +99,16 @@ export const completeBoundary = (boundary: BoundaryRawData): BoundaryConvertedDa
 }
 
 export const build = (
-	data: EmlContent | string,
+	data: EmlContent,
 	options?: BuildOptions,
-): string | Error => {
+): string => {
 	let error: Error | string | undefined;
 	let eml = '';
 	const EOL = '\r\n'; //End-of-line
 
 	try {
 		if (!data) {
-			throw new Error('Argument "data" expected to be an object! or string');
-		}
-		if (typeof data === 'string') {
-			const readResult = read(data);
-			if (typeof readResult === 'string') {
-				throw new Error(readResult);
-			} else if (readResult instanceof Error) {
-				throw readResult;
-			} else {
-				data = readResult;
-			}
+			throw new Error('Argument "data" expected to be non-null');
 		}
 
 		if (!data.headers) {
@@ -261,7 +251,9 @@ export const build = (
 			eml += '--' + boundary + '--' + EOL;
 		}
 	} catch (e) {
-		error = e as string;
+		const error = new Error("Error building EML");
+		(error as any).cause = e;
+		throw error;
 	}
-	return error || eml;
+	return eml;
 }

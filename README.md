@@ -39,7 +39,7 @@ yarn add @tobrien/eml-parse-js
 Here's a quick example of how to parse an EML file string and access its content as a JavaScript object:
 
 ```javascript
-import { readEml } from '@tobrien/eml-parse-js';
+import { parseEml, readEml } from '@tobrien/eml-parse-js';
 
 const emlString = `Date: Wed, 01 Jan 2020 00:00:00 -0000
 From: sender@example.com
@@ -49,17 +49,26 @@ Subject: Hello World
 This is the email body.`;
 
 try {
-  const emailObject = readEml(emlString);
-  console.log('Subject:', emailObject.subject);
-  // Output: Subject: Hello World
-  console.log('From Address:', emailObject.from && emailObject.from[0] ? emailObject.from[0].address : 'not found');
-  // Output: From Address: sender@example.com
-  console.log('To Address:', emailObject.to && emailObject.to[0] ? emailObject.to[0].address : 'not found');
-  // Output: To Address: receiver@example.com
-  console.log('Text Body:', emailObject.text);
-  // Output: Text Body: This is the email body.
+  const parsedEml = parseEml(emlString);
+  if (parsedEml instanceof Error) {
+    console.error('Failed to parse EML:', parsedEml);
+  } else {
+    const emailObject = readEml(parsedEml);
+    if (emailObject instanceof Error) {
+      console.error('Failed to read EML content:', emailObject);
+    } else {
+      console.log('Subject:', emailObject.subject);
+      // Output: Subject: Hello World
+      console.log('From Address:', emailObject.from && emailObject.from[0] ? emailObject.from[0].address : 'not found');
+      // Output: From Address: sender@example.com
+      console.log('To Address:', emailObject.to && emailObject.to[0] ? emailObject.to[0].address : 'not found');
+      // Output: To Address: receiver@example.com
+      console.log('Text Body:', emailObject.text);
+      // Output: Text Body: This is the email body.
+    }
+  }
 } catch (error) {
-  console.error('Failed to parse EML:', error);
+  console.error('Error processing EML:', error);
 }
 ```
 
@@ -101,19 +110,19 @@ try {
 }
 ```
 
-### `readEml(eml: string | ParsedEml, options?: OptionOrNull): EmlContent | Error | string`
+### `readEml(eml: ParsedEml, options?: OptionOrNull): EmlContent | Error`
 
-The `readEml` function takes either an EML file content as a string or a `ParsedEml` object (from `parseEml`) and converts it into a more user-friendly `EmlContent` object. This object simplifies access to common email fields like subject, from, to, cc, date, text body, HTML body, and attachments.
+The `readEml` function takes a `ParsedEml` object (the output from `parseEml`) and converts it into a more user-friendly `EmlContent` object. This object simplifies access to common email fields like subject, from, to, cc, date, text body, HTML body, and attachments.
 
--   **`eml`**: A string containing the EML file content or a `ParsedEml` object.
--   **`options`**: Optional settings. Currently, only `headersOnly: boolean` is supported. If true, only headers are parsed.
+-   **`eml`**: A `ParsedEml` object (obtained from `parseEml`).
+-   **`options`**: Optional settings. Currently, only `headersOnly: boolean` is supported. If true, only headers are processed into the `EmlContent` (the body and attachments from `ParsedEml` are ignored).
 
 The `EmlContent` object makes it easier to work with the email's content directly. For example, attachments are processed and their data is made available.
 
 Here's an example of using `readEml`, including the `headersOnly` option:
 
 ```javascript
-import { readEml } from '@tobrien/eml-parse-js';
+import { parseEml, readEml } from '@tobrien/eml-parse-js';
 
 const emlSimpleForRead = `Date: Mon, 23 Oct 2023 10:00:00 -0700
 From: "Sender Name" <sender.ops@example.com>
@@ -124,21 +133,38 @@ Content-Type: text/plain; charset="utf-8"
 This is a simple text body for the readEml example.`;
 
 try {
-  // Full parsing
-  const emailContent = readEml(emlSimpleForRead);
-  console.log('readEml Subject:', emailContent.subject);
-  // Output: readEml Subject: Example for readEml
-  console.log('readEml From:', emailContent.from && emailContent.from[0] ? emailContent.from[0].address : 'not found');
-  // Output: readEml From: sender.ops@example.com
-  console.log('readEml Text Body Preview:', emailContent.text ? emailContent.text.substring(0, 20) : 'not found');
-  // Output: readEml Text Body Preview: This is a simple tex
+  const parsedVersion = parseEml(emlSimpleForRead);
+  if (parsedVersion instanceof Error) {
+    console.error('Failed to parse EML for readEml example:', parsedVersion);
+  } else {
+    // Full processing with readEml
+    const emailContent = readEml(parsedVersion);
+    if (emailContent instanceof Error) {
+      console.error('Failed to read EML content:', emailContent);
+    } else {
+      console.log('readEml Subject:', emailContent.subject);
+      // Output: readEml Subject: Example for readEml
+      console.log('readEml From:', emailContent.from && emailContent.from[0] ? emailContent.from[0].address : 'not found');
+      // Output: readEml From: sender.ops@example.com
+      console.log('readEml Text Body Preview:', emailContent.text ? emailContent.text.substring(0, 20) : 'not found');
+      // Output: readEml Text Body Preview: This is a simple tex
+    }
 
-  // Using headersOnly option
-  const headersOnly = readEml(emlSimpleForRead, { headersOnly: true });
-  console.log('readEml Subject (headersOnly):', headersOnly.subject);
-  // Output: readEml Subject (headersOnly): Example for readEml
-  console.log('readEml Text Body (headersOnly, should be null):', headersOnly.text);
-  // Output: readEml Text Body (headersOnly, should be null): null
+    // Using headersOnly option with readEml
+    // Note: parseEml also has a headersOnly option.
+    // If you only need headers from the start, use parseEml's option.
+    // readEml's headersOnly option is used if you have a full ParsedEml object
+    // but only want to populate the EmlContent with header-derived information.
+    const headersOnlyContent = readEml(parsedVersion, { headersOnly: true });
+    if (headersOnlyContent instanceof Error) {
+      console.error('Failed to read EML content (headersOnly):', headersOnlyContent);
+    } else {
+      console.log('readEml Subject (headersOnly):', headersOnlyContent.subject);
+      // Output: readEml Subject (headersOnly): Example for readEml
+      console.log('readEml Text Body (headersOnly, should be null or undefined):', headersOnlyContent.text);
+      // Output: readEml Text Body (headersOnly, should be null or undefined): null
+    }
+  }
 } catch (error) {
   console.error('Error in readEml example section:', error);
 }
@@ -146,7 +172,7 @@ try {
 
 ### `buildEml(data: EmlContent | string, options?: BuildOptions | null): string | Error`
 
-The `buildEml` function takes a `EmlContent` object (or an EML string, which it will first parse using `readEml`) and constructs an EML file string. This is useful for creating or modifying emails programmatically.
+The `buildEml` function takes a `EmlContent` object (or an EML string, which it will first parse using `parseEml` and then `readEml`) and constructs an EML file string. This is useful for creating or modifying emails programmatically.
 
 -   **`data`**: A `EmlContent` object representing the email to be built, or an EML string.
 -   **`options`**: Optional settings for building the EML, like encoding preferences (not fully implemented yet).
