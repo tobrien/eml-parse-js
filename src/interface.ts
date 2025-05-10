@@ -21,9 +21,9 @@ export interface ParsedEml {
 export interface EmlContent {
 	date: Date;
 	subject: string;
-	from: EmailAddress | EmailAddress[] | null;
-	to: EmailAddress | EmailAddress[] | null;
-	cc?: EmailAddress | EmailAddress[] | null;
+	from: EmailAddress[];
+	to: EmailAddress[];
+	cc?: EmailAddress[];
 	headers: EmlHeaders;
 	multipartAlternative?: {
 		'Content-Type': string;

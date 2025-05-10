@@ -109,21 +109,16 @@ function getCharset(contentType: string) {
 /**
  * Gets name and e-mail address from a string, e.g. 'PayPal' <noreply@paypal.com> => { name: 'PayPal', email: 'noreply@paypal.com' }
  * @param {String} raw
- * @returns { EmailAddress | EmailAddress[] | null}
+ * @returns {EmailAddress[]}
  */
-function getEmailAddress(rawStr: string): EmailAddress | EmailAddress[] | null {
+function getEmailAddress(rawStr: string): EmailAddress[] {
+	const addresses: EmailAddress[] = [];
 	const raw = unquoteString(rawStr);
 	const parseList = addressparser(raw);
-	const list = parseList.map((v) => ({ name: v.name, email: v.address }) as EmailAddress);
-
-	//Return result
-	if (list.length === 0) {
-		return null; //No e-mail address
+	for (const v of parseList) {
+		addresses.push({ name: v.name, email: v.address } as EmailAddress);
 	}
-	if (list.length === 1) {
-		return list[0]; //Only one record, return as object, required to preserve backward compatibility
-	}
-	return list; //Multiple e-mail addresses as array
+	return addresses; //Multiple e-mail addresses as array
 }
 
 /**
