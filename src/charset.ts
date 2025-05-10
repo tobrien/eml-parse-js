@@ -1,6 +1,16 @@
 import { TextDecoder, TextEncoder } from '@sinonjs/text-encoding';
 
 /**
+ * Gets character set name, e.g. contentType='.....charset='iso-8859-2'....'
+ * @param {String} contentType
+ * @returns {String|undefined}
+ */
+export const getCharset = (contentType: string) => {
+	const match = /charset\s*=\W*([\w\-]+)/g.exec(contentType);
+	return match ? match[1] : undefined;
+}
+
+/**
  * Encodes an unicode string into an Uint8Array object as UTF-8
  *
  * @param {String} str String to be encoded
