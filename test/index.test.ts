@@ -358,6 +358,7 @@ This is the plain text body of the email.\r\n`;
 
     it('should read an EML with HTML body', () => {
         const eml = `From: sender@example.com\r\n\
+Date: Mon, 23 Sep 2024 10:00:00 +0000\r\n\
 Subject: HTML Email\r\n\
 Content-Type: text/html; charset=utf-8\r\n\
 \r\n\
