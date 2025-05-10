@@ -79,10 +79,12 @@ try {
 This library provides several functions for working with EML files. The primary ones are `parseEml`, `readEml`, and `buildEml`.
 
 ### `parseEml(eml: string, options?: OptionOrNull): string | Error | ParsedEml`
+### `parseEml(eml: string, options?: OptionOrNull): string | Error | ParsedEml`
 
 The `parseEml` function takes an EML file content as a string and parses it into a structured JavaScript object. This object, `ParsedEml`, contains the raw headers and body of the email, including all MIME parts.
 
 -   **`eml`**: A string containing the EML file content.
+-   **`options`** (optional): An object with parsing options. One common option is `headersOnly: true` to parse only the email headers.
 -   **`options`** (optional): An object with parsing options. One common option is `headersOnly: true` to parse only the email headers.
 
 The returned `ParsedEml` object provides a detailed, somewhat raw representation of the EML structure.
@@ -102,8 +104,11 @@ try {
   const parsedEmail = parseEml(emlString);
   console.log('Raw Subject:', parsedEmail.headers && parsedEmail.headers.subject ? parsedEmail.headers.subject : 'not found');
   // Output: Raw Subject: Test Email for parseEml
+  console.log('Raw Subject:', parsedEmail.headers && parsedEmail.headers.subject ? parsedEmail.headers.subject : 'not found');
+  // Output: Raw Subject: Test Email for parseEml
   // parseEml provides the raw body, which might be a string or structured by MIME parts
   console.log('Raw Body:', parsedEmail.body);
+  // Output: Raw Body: This is the body of the test email for parseEml.
   // Output: Raw Body: This is the body of the test email for parseEml.
 } catch (error) {
   console.error('Failed to parse EML with parseEml:', error);
@@ -178,6 +183,8 @@ The `buildEml` function takes a `EmlContent` object (or an EML string, which it 
 -   **`options`**: Optional settings for building the EML, like encoding preferences (not fully implemented yet).
 
 This function allows you to assemble an EML message from its constituent parts, including headers, text/HTML bodies, and attachments.
+
+
 
 
 
